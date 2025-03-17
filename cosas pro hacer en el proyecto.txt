@@ -1,0 +1,8 @@
+seguir el ventas
+hacer el buscar de todos HECHO
+hacer la logica para las cantidades del carrito HECHO
+hacer la logica para las filas de los productos en el listado, para que cuando llegue a 5 baje, a 10 baje, a 15 bajhe y asi HECHO
+corregir error de cuando creamos un articulo por ejemplo, lo modificamos queda la pestaña de modificar HECHO
+corregir que sale el error de ingrese los datos correctamente y la contraseña o el usuario no son correcto juntos, hacer que se borre uno y aparezca el otro y asi
+corregir que cuando creo una categoria despues de haber creado otra no se borra el placeholder y entra en el crear categoria pero te manda al else de una, el error debe estar en el entry_categoria
+

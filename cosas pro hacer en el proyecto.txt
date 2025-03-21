@@ -1,0 +1,18 @@
+COSAS HECHAS
+hacer el buscar de todos HECHO
+hacer la logica para las cantidades del carrito HECHO
+hacer la logica para las filas de los productos en el listado, para que cuando llegue a 5 baje, a 10 baje, a 15 bajhe y asi HECHO
+corregir que cuando creo una categoria despues de haber creado otra no se borra el placeholder HECHO
+corregir que cuando modificamos no desaparece el frame contenido de categorias hasta que tocamos volver 2 veces
+hacer lo de los placeholders que hice en el categorias en las demas secciones y tambien lo que desaparece la ventana de creacion cuando creamos algo en los otros
+corregir error de cuando creamos un articulo por ejemplo, lo modificamos queda la pestaña de modificar no desaparece 
+
+
+
+COSAS POR HACER
+seguir el ventas
+corregir que sale el error de ingrese los datos correctamente y la contraseña o el usuario no son correcto juntos, hacer que se borre uno y aparezca el otro y asi
+corregir el total del carrito, al ir aumentando y bajando la cantidad solo se suma el total, no se resta
+
+
+hacer que en el telefono de los proveeodres se puedan ingresar solo numeros

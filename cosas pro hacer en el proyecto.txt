@@ -16,3 +16,4 @@ corregir el total del carrito, al ir aumentando y bajando la cantidad solo se su
 
 
 hacer que en el telefono de los proveeodres se puedan ingresar solo numeros
+1

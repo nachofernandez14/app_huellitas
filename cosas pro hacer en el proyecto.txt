@@ -18,3 +18,5 @@ seguir el ventas
 corregir los errores que genera el destroy()
 hacer que en el telefono de los proveeodres se puedan ingresar solo numeros
 seguir con la imagen de categorias
+
+.

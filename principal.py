@@ -1,6 +1,7 @@
 from customtkinter import *
 import customtkinter
 from tkinter import ttk
+from tkinter import Tk, Label
 from PIL import Image, ImageTk
 import os
 import sqlite3
@@ -29,7 +30,7 @@ azul = '#4B69FF'
 azul_oscuro= '#1F3175'
 gris_intermedio = '#777777'
 
-
+imagen_ventas = None
 
 #Creamos un clase articulo y proveedor para asi simplificar el codigo
 class Articulo():
@@ -48,6 +49,10 @@ class Proveedor():
 
 def ventana_principal(usuario):
 	
+	global imagen_ventas
+	imagen_fondo = Image.open(os.path.join(carpeta_imagenes, "huellitasLogo.png"))
+	imagen_ventas = CTkImage(dark_image=imagen_fondo, size=(600, 450))
+	
 
 	ventana_p = CTk()
 	ventana_p.geometry("1366x768")
@@ -64,6 +69,10 @@ def ventana_principal(usuario):
 	frame_menu.pack(side=LEFT, fill=Y)
 	frame_fondo = CTkFrame(ventana_p)
 	frame_fondo.pack(fill=BOTH, expand=True)
+
+	label_imagen_fondo = CTkLabel(frame_fondo, image=imagen_ventas, text= "")
+	label_imagen_fondo.image = imagen_ventas  # Mantener la referencia de la imagen
+	label_imagen_fondo.pack(padx=50, pady=50)
 
 	##Creamos los frames para todas las secciones
 	frame_articulos = CTkFrame(ventana_p, fg_color=gris_claro)
@@ -632,6 +641,10 @@ def ventana_principal(usuario):
 
 		menu_categorias()
 
+	global imagen_categorias
+	imagen_categorias = Image.open(os.path.join(carpeta_imagenes, "categorias.png"))
+	imagen_categorias = CTkImage(dark_image=imagen_fondo, size=(600, 450))
+
 	boton_categorias = CTkButton(frame_menu, text="Categorias", fg_color=verde_claro, text_color=gris_oscuro, font=fuente_default, command=categorias)
 	boton_categorias.pack(ipady=6)
 
@@ -977,29 +990,65 @@ def ventana_principal(usuario):
 			columna1 = 0
 			fila1 = 0
 
-			
+			carrito = {}
 
 			def agregar_al_carrito(art):
 				global carrito
-				carrito.append(art)
 				global fila1
 				fila1 += 1
+				global cantidad_anterior, total_precio, total_carrito
+				cantidad_anterior = 0
+				total_precio = 0
+				total_carrito = 0
 				global total, cantidad
-				nombre = art[0]
-				precio = art[1]
+				producto_id = art[0]
+				nombre = art[1]
+				precio= art[2]
+				cantidad = 1
+
+
 				label_nombre= CTkLabel(frame_carrito_articulos, text=nombre)
 				label_monto = CTkLabel(frame_carrito_articulos, text=precio)
 
-				def opcion_seleccionada(opcion):
-					cantidad = int(opcion_cantidad.get()) 
-					if(cantidad>1):
-						precio = art[1] * cantidad
-						label_monto.configure(text=precio)
-						total.set(total.get() + precio - art[1])
-						label_total_precio.configure(text=f"${total.get()}")
+				carrito[producto_id] = {"nombre": nombre, "precio": precio, "cantidad":cantidad, "total":total}
+
+				
+
+				def opcion_seleccionada(opcion, producto_id = producto_id):
+					
+					global total_precio, cantidad_anterior, total_carrito
+					cantidad = int(opcion_cantidad.get())
+					precio_unitario = carrito[producto_id]["precio"]
+					diferencia = cantidad - carrito[producto_id]["cantidad"]
+					
+					
+
+					ids_productos = list(carrito.keys())
+					
+
+
+					if cantidad >=1:
+						total_carrito = 0
+						carrito[producto_id]["cantidad"] = cantidad
+
+
+						total_precio = precio_unitario * cantidad
+						label_monto.configure(text=total_precio)
+
+
+						for info in carrito.values():
+							precio = info["precio"]
+							cantidad = info["cantidad"]
+
+							total_carrito = total_carrito + (precio * cantidad)
+
+							label_total_precio.configure(text=f"${total_carrito}")
+
+					
+
 				
 				opciones = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-				opcion_cantidad = CTkOptionMenu(frame_carrito_articulos, values=opciones, font=fuente_default, width=10, command=opcion_seleccionada)
+				opcion_cantidad = CTkOptionMenu(frame_carrito_articulos, values=opciones, font=fuente_default, width=10, command=lambda opcion: opcion_seleccionada(opcion, producto_id))
 				label_nombre.grid(row=fila1, column=0, pady=5)
 				label_monto.grid(row=fila1, column=1, pady=5)
 				opcion_cantidad.grid(row=fila1, column=2, pady=5)
@@ -1010,7 +1059,7 @@ def ventana_principal(usuario):
 
 			
 			for articulo in articulos:
-				informacion = articulo[0] + "\n" + "$" + str(articulo[1])
+				informacion = articulo[1] + "\n" + "$" + str(articulo[2])
 				label_articulo = CTkLabel(frame_articulos, text=informacion, text_color=gris_oscuro)
 				label_articulo.grid(row = fila_actual * 2, column = columna_actual, padx=5, pady=2)
 
@@ -1024,12 +1073,14 @@ def ventana_principal(usuario):
 
 		menu_ventas()
 
-	global imagen_ventas
-	ruta_imagen = os.path.join(carpeta_imagenes, "carrito.png")
-	imagen_ventas = CTkImage(dark_image=Image.open(ruta_imagen), size=(50, 50))
-
+	"""
 	
-	boton_ventas = CTkButton(frame_menu, text="Ventas", image=imagen_ventas, compound="left", fg_color=verde_claro, text_color=gris_oscuro, font=fuente_default, command=ventas)
+	imagen_ventas = CTkImage(dark_image=Image.open(os.path.join(carpeta_imagenes, "carrito.png")), size=(30,30))
+	img_ventas = CTkLabel(frame_menu, image=imagen_ventas, text="")
+	img_ventas.image = imagen_ventas 
+	"""
+	boton_ventas = CTkButton(frame_menu, text="Ventas", compound="left", fg_color=verde_claro, text_color=gris_oscuro, font=fuente_default, command=ventas)
+	
 	boton_ventas.pack(ipady=6)
 
 	usuario= CTkLabel(frame_menu, text=usuario, font=fuente_default)

@@ -61,6 +61,7 @@ def iniciar_sesion():
 	label_logo.pack(pady=(80,0))
 	label_huellitas.pack()
 	label_marca.pack(side=BOTTOM)
+
 	
 
 	def ocultar_widgets_login():
@@ -124,6 +125,7 @@ def iniciar_sesion():
 		ocultar_widgets_login()
 		global validacion
 		validacion = False
+
 		
 		def logicaInicioSesion():
 			global validacion
@@ -136,8 +138,18 @@ def iniciar_sesion():
 					if (us[0] == usuario and us[1] == contraseña):
 						validacion = True
 					if(validacion == True):
-						ventana.withdraw()
+						try:
+							ventana.after_cancel("all")
+							ventana.destroy()
+						except Exception as e:
+							print(f"Error al cancelar eventos: {e}")
+						
 						principal.ventana_principal(usuario)
+						sys.exit()
+						"""
+						ventana.destroy()
+						principal.ventana_principal(usuario)
+						"""
 					elif(validacion == False):
 						label_error.pack_forget()	
 						label_error3.pack(pady=10)

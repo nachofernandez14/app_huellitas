@@ -97,7 +97,7 @@ class baseDeDatos():
 
 	def listarPyNArticulos(self):
 		with self.connection:
-			self.cursor.execute("SELECT nombre, precio_venta FROM articulos WHERE estado == 'activo'")
+			self.cursor.execute("SELECT id, nombre, precio_venta FROM articulos WHERE estado == 'activo'")
 			return self.cursor.fetchall()
 		
 	def listarCategorias(self):

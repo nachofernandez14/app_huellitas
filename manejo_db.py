@@ -63,6 +63,19 @@ class baseDeDatos():
 					PRIMARY KEY("id" AUTOINCREMENT)
 					);
 			''')
+		with self.connection:
+			self.connection.execute('''
+				CREATE TABLE IF NOT EXISTS "cuentas" (
+					"num"	INTEGER,
+					"fecha"	TEXT,
+					"proveedor"	INTEGER,
+					"saldo"	INTEGER,
+					"pagos" INTEGER,
+					"pedidos" INTEGER,
+					FOREIGN KEY("proveedor") REFERENCES "proveedores"("id"),
+					PRIMARY KEY("num" AUTOINCREMENT)
+					);
+				''')
 
 	def crearUsuario(self, usuario, contraseña):
 		with self.connection:
@@ -90,24 +103,73 @@ class baseDeDatos():
 			self.cursor.execute("INSERT INTO proveedores (nombre, telefono) VALUES (?,?)",
 				(proveedor.nombre, proveedor.telefono))
 
+	def insertCuenta(self, cuenta):
+		with self.connection:
+			self.cursor.execute("INSERT INTO cuentas (fecha, proveedor, saldo, pagos, pedidos) VALUES (?,?,?,?,?)",
+				(cuenta.fecha, cuenta.proveedor, cuenta.saldo, cuenta.pagos, cuenta.pedidos))
+
 	def listarArticulos(self):
 		with self.connection:
 			self.cursor.execute("SELECT * FROM articulos WHERE estado == 'activo'")
 			return self.cursor.fetchall()
 
+	def listarArticulosInactivos(self):
+		with self.connection:
+			self.cursor.execute("SELECT * FROM articulos WHERE estado == 'inactivo'")
+			return self.cursor.fetchall()
+
+
 	def listarPyNArticulos(self):
 		with self.connection:
 			self.cursor.execute("SELECT id, nombre, precio_venta FROM articulos WHERE estado == 'activo'")
 			return self.cursor.fetchall()
+
+	def listarPyNArticulosVentas(self):
+		with self.connection:
+			self.cursor.execute("SELECT id, nombre, precio_venta FROM articulos WHERE estado == 'activo' AND cantidad > 0")
+			return self.cursor.fetchall()
+
+	def listarPyNArticulosVentasPorCat(self, categoria):
+		with self.connection:
+			self.cursor.execute("SELECT id, nombre, precio_venta FROM articulos WHERE estado == 'activo' AND cantidad > 0 AND id_categoria = (?)",
+				(categoria,))
+			return self.cursor.fetchall()
 		
+	def listarPyNArticulosInactivos(self):
+		with self.connection:
+			self.cursor.execute("SELECT id, nombre, precio_venta FROM articulos WHERE estado == 'inactivo'")
+			return self.cursor.fetchall()
+
 	def listarCategorias(self):
 		with self.connection:
 			self.cursor.execute("SELECT * FROM categorias WHERE estado == 'activo'")
 			return self.cursor.fetchall()
 
+	def listarCategoriasInactivas(self):
+		with self.connection:
+			self.cursor.execute("SELECT * FROM categorias WHERE estado == 'inactivo'")
+			return self.cursor.fetchall()
+
 	def listarProveedores(self):
 		with self.connection:
 			self.cursor.execute("SELECT * FROM proveedores WHERE estado == 'activo'")
+			return self.cursor.fetchall()
+
+	def listarCuentas(self):
+		with self.connection:
+			self.cursor.execute("SELECT * FROM cuentas")
+			return self.cursor.fetchall()	
+
+	def listarCuentasPorProveedor(self, id_proveedor):
+		with self.connection:
+			self.cursor.execute("SELECT * FROM cuentas WHERE proveedor == (?)",
+				(id_proveedor,))
+			return self.cursor.fetchall()	
+
+
+	def listarProveedoresInactivos(self):
+		with self.connection:
+			self.cursor.execute("SELECT * FROM proveedores WHERE estado == 'inactivo'")
 			return self.cursor.fetchall()
 
 	def actualizarArticulo(self, articulo, id_articulo):
@@ -125,15 +187,48 @@ class baseDeDatos():
 			self.cursor.execute("UPDATE proveedores SET nombre = ?, telefono = ? WHERE id = ?",
 				(proveedor.nombre, proveedor.telefono, id_proveedor))
 
+	def actualizarCuenta(self, cuenta, id_cuenta):
+		with self.connection:
+			self.cursor.execute("UPDATE cuentas SET fecha = ?, proveedor = ?, saldo = ?, pagos = ?, pedidos = ? WHERE num = ?",
+				(cuenta.fecha, cuenta.proveedor, cuenta.saldo, cuenta.pagos, cuenta.pedidos, id_cuenta))
+
 	def darDeBajaCategoria(self, id_categoria):
 		with self.connection:
-			self.cursor.execute("UPDATE categorias SET estado = 'innactivo' WHERE id = ?", (id_categoria,))
+			self.cursor.execute("UPDATE categorias SET estado = 'inactivo' WHERE id = ?", (id_categoria,))
+
+	def darDeAltaCategoria(self, id_categoria):
+		with self.connection:
+			self.cursor.execute("UPDATE categorias SET estado = 'activo' WHERE id = ?", (id_categoria,))		
 
 	def darDeBajaProveedor(self, id_proveedor):
 		with self.connection:
-			self.cursor.execute("UPDATE proveedores SET estado = 'innactivo' WHERE id = ?", (id_proveedor,))
+			self.cursor.execute("UPDATE proveedores SET estado = 'inactivo' WHERE id = ?", (id_proveedor,))
+
+	def darDeAltaProveedor(self, id_proveedor):
+		with self.connection:
+			self.cursor.execute("UPDATE proveedores SET estado = 'activo' WHERE id = ?", (id_proveedor,))
 
 	def darDeBajaArticulo(self, id_articulo):
 		with self.connection:
-			self.cursor.execute("UPDATE articulos SET estado = 'innactivo' WHERE id = ?", (id_articulo,))
+			self.cursor.execute("UPDATE articulos SET estado = 'inactivo' WHERE id = ?", (id_articulo,))
+
+	def darDeAltaArticulo(self, id_articulo):
+		with self.connection:
+			self.cursor.execute("UPDATE articulos SET estado = 'activo' WHERE id = ?", (id_articulo,))
+
+	def eliminarCuenta(self, id_cuenta):
+		with self.connection:
+			self.cursor.execute("DELETE FROM cuentas WHERE num = ?",
+				(id_cuenta,))
+
+	def actualizarCantidadArt(self, nombre_articulo, cantidad_nueva):
+		with self.connection:
+			self.cursor.execute("UPDATE articulos SET cantidad = ? WHERE nombre = ?",
+				(cantidad_nueva, nombre_articulo,))
+
+	def traerCantidadVieja(self, nombre_articulo):
+		with self.connection:
+			self.cursor.execute("SELECT cantidad FROM articulos WHERE nombre = ?",
+				(nombre_articulo,))
+			return self.cursor.fetchall()
 	

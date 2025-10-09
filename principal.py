@@ -275,11 +275,12 @@ def ventana_principal(usuario):
 				id = articulo[0]
 				nombre = articulo[1]
 				categoria = articulo[2]
-				proveedor = articulo[3]
-				precio_costo = articulo[4]
-				precio_venta = articulo[5]
-				cantidad = articulo[6]
-				lista_articulos.insert("", "end", text=id, values=(nombre, categoria, proveedor, precio_costo, precio_venta, cantidad))
+				subcategoria = articulo[3]
+				proveedor = articulo[4]
+				precio_costo = articulo[5]
+				precio_venta = articulo[6]
+				cantidad = articulo[7]
+				lista_articulos.insert("", "end", text=id, values=(nombre, categoria, subcategoria,proveedor, precio_costo, precio_venta, cantidad))
 
 		def listar_articulos_inactivos():
 			for item in lista_articulos.get_children():
@@ -302,14 +303,18 @@ def ventana_principal(usuario):
 			buscador = entry_busqueda_articulos.get().lower()
 			
 			lista_articulos.delete(*lista_articulos.get_children())
-
-			for articulo in articulos:
-
-				nombre_articulo1 = articulo[1].lower()
-				if nombre_articulo1.startswith(buscador):
-					lista_articulos.insert("", END, text=articulo[0], values=(articulo[1],articulo[2], articulo[3], articulo[4], articulo[5], articulo[6]))
-			if(buscador== ""):
-				listar_articulos()
+			if(len(buscador)==13):
+				codigo_barras = buscador
+				articulo = base_de_datos.listar_art_cod_barras(codigo_barras)
+				for dato in articulo:
+					lista_articulos.insert("", "end", text=dato[0],  values=(dato[1],dato[2], dato[3], dato[4], dato[5], dato[6], dato[7]))
+			else:
+				for articulo in articulos:
+					nombre_articulo1 = articulo[1].lower()
+					if nombre_articulo1.startswith(buscador):
+						lista_articulos.insert("", END, text=articulo[0],values=(articulo[1],articulo[2], articulo[3], articulo[4], articulo[5], articulo[6], articulo[7]))
+				if(buscador== ""):
+					listar_articulos()
 
 		def menu_articulos():
 			frame_contenido_articulos.pack_forget()
@@ -327,22 +332,24 @@ def ventana_principal(usuario):
 				label_articulos= CTkLabel(frame_articulos, text="ARTICULOS", text_color='white', bg_color=verde_oscuro, font=fuente_titulos)
 
 				lista_articulos = ttk.Treeview(frame_articulos, height=31)
-				lista_articulos["columns"]= ("nombre", "categoria", "proveedor", "precio_costo", "precio_venta", "cantidad")
-				lista_articulos.column("#0", anchor="center", width=30)
+				lista_articulos["columns"]= ("nombre", "categoria","subcategoria", "proveedor", "precio_costo", "precio_venta", "cantidad")
+				lista_articulos.column("#0", anchor="center", width=100)
 				lista_articulos.column("nombre", anchor="center", width=180)
-				lista_articulos.column("categoria", anchor="center", width=160)
-				lista_articulos.column("proveedor", anchor="center", width=130)
-				lista_articulos.column("precio_costo", anchor="center", width=130)
-				lista_articulos.column("precio_venta", anchor="center", width=130)
-				lista_articulos.column("cantidad", anchor="center", width=100)
+				lista_articulos.column("categoria", anchor="center", width=140)
+				lista_articulos.column("subcategoria", anchor="center", width=140)
+				lista_articulos.column("proveedor", anchor="center", width=100)
+				lista_articulos.column("precio_costo", anchor="center", width=100)
+				lista_articulos.column("precio_venta", anchor="center", width=100)
+				lista_articulos.column("cantidad", anchor="center", width=50)
 
 				lista_articulos.heading("#0", text="ID", anchor="center")
 				lista_articulos.heading("nombre", text="Nombre", anchor="center")
 				lista_articulos.heading("categoria", text="Categoria", anchor="center")
+				lista_articulos.heading("subcategoria", text="Subcategoria", anchor="center")
 				lista_articulos.heading("proveedor", text="Proveedor", anchor="center")
-				lista_articulos.heading("precio_costo", text="Precio de costo", anchor="center")
-				lista_articulos.heading("precio_venta", text="Precio de venta", anchor="center")
-				lista_articulos.heading("cantidad", text="Cantidad", anchor="center")
+				lista_articulos.heading("precio_costo", text="Precio costo", anchor="center")
+				lista_articulos.heading("precio_venta", text="Precio venta", anchor="center")
+				lista_articulos.heading("cantidad", text="Stock", anchor="center")
 				
 
 				
@@ -689,6 +696,7 @@ def ventana_principal(usuario):
 			for categoria in categorias:	
 				id = categoria[0]
 				nombre = categoria[1]
+				subcategoria = categoria[2]
 				lista_categorias.insert("", "end", text=id, values=(nombre,))
 
 		def listarCategoriasInac():
@@ -744,11 +752,13 @@ def ventana_principal(usuario):
 				opciones = ['Crear categoria','Modificar categoria','Eliminar categoria', 'Categorias inactivas']
 				boton_manipular_categorias = CTkOptionMenu(frame_top_categorias, values=opciones,font=fuente_default, command=seleccion_categoria)
 				label_categorias= CTkLabel(frame_categorias, text="CATEGORIAS", text_color='white', bg_color=verde_oscuro, font=fuente_titulos)
-				lista_categorias = ttk.Treeview(frame_categorias, columns=('categoria'))
+				lista_categorias = ttk.Treeview(frame_categorias, columns=('categoria', 'subcategoria'))
 				lista_categorias.column("#0", anchor="center", width=60)
 				lista_categorias.column("categoria", anchor="center", width=500)
+				lista_categorias.column("subcategoria", anchor="center", width=300)
 				lista_categorias.heading("#0", text="ID", anchor="center")
 				lista_categorias.heading("categoria", text="Categoria", anchor="center")
+				lista_categorias.heading("subcategoria", text="Subcategoria", anchor="center")
 				
 			frame_categorias.pack(fill=BOTH, expand=True)
 			frame_top_categorias.pack(side=TOP, fill=X, ipady=12)
@@ -770,9 +780,10 @@ def ventana_principal(usuario):
 		
 
 		if 'modFramesContenido' not in globals():
-			global modFramesContenido, entry_categoria, boton_volver_categorias	
+			global modFramesContenido, entry_categoria, boton_volver_categorias	,entry_id_categoria
 			modFramesContenido = True
-			entry_categoria = CTkEntry(frame_contenido_categorias, font=fuente_default, width=200)
+			entry_id_categoria = CTkEntry(frame_contenido_categorias, font=fuente_default, width=200, placeholder_text="ID")
+			entry_categoria = CTkEntry(frame_contenido_categorias, font=fuente_default, width=200, placeholder_text="Nombre categoria")
 			boton_volver_categorias= CTkButton(frame_contenido_categorias, text="Volver", command=lambda: [menu_categorias(), boton_manipular_categorias.configure(state='normal')])	
 
 		def seleccion_categoria(opcion):
@@ -789,6 +800,7 @@ def ventana_principal(usuario):
 			        
 			    def crear_categoria():
 			        categoria = entry_categoria.get()
+			        id_categoria = entry_id_categoria.get()
 			        if categoria != "":
 			        	validacion = True
 			        	categorias = base_de_datos.listarCategorias()
@@ -798,7 +810,7 @@ def ventana_principal(usuario):
 			        			validacion = False
 			        			break
 			        	if validacion:
-			        		base_de_datos.insertCategoria(categoria)
+			        		base_de_datos.insertCategoria(id_categoria,categoria)
 			        		listarCategorias()
 			        		menu_categorias()
 			        		boton_manipular_categorias.configure(state='normal')
@@ -809,21 +821,20 @@ def ventana_principal(usuario):
 			    global boton_crear_categoria, label_crear_categoria
 			    if 'modCrearCategoria' not in globals():
 			        boton_crear_categoria = CTkButton(frame_contenido_categorias, text="Crear categoria", command=crear_categoria)
-			        label_crear_categoria = CTkLabel(frame_contenido_categorias, text="Ingrese el nombre de la categoria", font=fuente_titulos, text_color=verde_intermedio)
+			        label_crear_categoria = CTkLabel(frame_contenido_categorias, text="Ingrese el id y nombre de la categoria", font=fuente_titulos, text_color=verde_intermedio)
+
 			        global modCrearCategoria
 			        modCrearCategoria = True
 			        
-			    # Si entry_categoria no existe, crearla una sola vez
-			    global entry_categoria
-			    if 'entry_categoria' not in globals():
-			        entry_categoria = CTkEntry(frame_contenido_categorias)
+			   
 			        
 			    # Mostrar el frame y widgets
 			    frame_contenido_categorias.pack(side=RIGHT, fill=Y, ipadx=20)
 			    label_crear_categoria.pack(pady=10)
+			    entry_id_categoria.pack(pady=(20,0))
 			    entry_categoria.pack(pady=(20,0))
 			    entry_categoria.delete(0, END)
-			    
+			    entry_id_categoria.delete(0, END)
 			    boton_crear_categoria.pack(pady=10)
 			    boton_volver_categorias.pack()
 			        

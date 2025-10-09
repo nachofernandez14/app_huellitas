@@ -23,12 +23,14 @@ class baseDeDatos():
 				CREATE TABLE IF NOT EXISTS"articulos" (
 				"id"	INTEGER,
 				"nombre"	TEXT NOT NULL,
-				"id_categoria"	INTEGER,
+				"id_categoria"	TEXT,
+				"subcategoria" TEXT,
 				"id_proveedor"	INTEGER,
 				"precio_costo"	INTEGER NOT NULL,
 				"precio_venta"	INTEGER NOT NULL,
 				"cantidad"	INTEGER NOT NULL,
 				"estado" TEXT NOT NULL DEFAULT 'activo',
+				"codigo_barras"	TEXT,
 				FOREIGN KEY("id_proveedor") REFERENCES "proveedores"("id"),
 				FOREIGN KEY("id_categoria") REFERENCES "categorias"("id"),
 				PRIMARY KEY("id" AUTOINCREMENT)
@@ -37,12 +39,13 @@ class baseDeDatos():
 		with self.connection:
 			self.connection.execute('''
 				CREATE TABLE IF NOT EXISTS "categorias" (
-				"id"	INTEGER,
+				"id"	TEXT,
 				"categoria"	TEXT,
 				"estado" TEXT NOT NULL DEFAULT 'activo',
-				PRIMARY KEY("id" AUTOINCREMENT)
+				PRIMARY KEY("id")
 				);
 			''')
+		
 		with self.connection:
 			self.connection.execute('''
 				CREATE TABLE IF NOT EXISTS "proveedores" (
@@ -92,10 +95,10 @@ class baseDeDatos():
 			(articulo.nombre, articulo.id_categoria, articulo.id_proveedor, articulo.precio_costo, articulo.precio_venta, articulo.cantidad)
 			)
 
-	def insertCategoria(self, categoria):
+	def insertCategoria(self, id_categoria,categoria):
 		with self.connection:
-			self.cursor.execute("INSERT INTO categorias (categoria) VALUES (?)",
-				(categoria,)
+			self.cursor.execute("INSERT INTO categorias (id, categoria) VALUES (?,?)",
+				(id_categoria,categoria)
 			)
 
 	def insertProveedor(self, proveedor):
@@ -118,6 +121,11 @@ class baseDeDatos():
 			self.cursor.execute("SELECT * FROM articulos WHERE estado == 'inactivo'")
 			return self.cursor.fetchall()
 
+	def listar_art_cod_barras(self, codigo_barras):
+		with self.connection:
+			self.cursor.execute("SELECT id, nombre, id_categoria, subcategoria, id_proveedor, precio_costo, precio_venta, cantidad FROM articulos WHERE codigo_barras == (?)",
+				(codigo_barras,))
+			return self.cursor.fetchall()
 
 	def listarPyNArticulos(self):
 		with self.connection:

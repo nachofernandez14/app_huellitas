@@ -1,20 +1,47 @@
 import os
 import sqlite3
-
-
+import sys
+import shutil
 
 carpeta_principal = os.path.dirname(__file__)
 carpeta_imagenes = os.path.join(carpeta_principal, ("imagenes"))
 
+def get_appdata_folder(nombre_app="HuellitasApp"):
+    """
+    Retorna una carpeta persistente (por usuario) donde guardar datos.
+    - En Windows: C:/Users/<usuario>/AppData/Local/HuellitasApp
+    - En Linux: /home/<usuario>/.miapp
+    - En macOS: /Users/<usuario>/Library/Application Support/MiApp
+    """
+    base = None
+    if sys.platform.startswith("win"):
+        base = os.path.join(os.environ["LOCALAPPDATA"], nombre_app)
+    elif sys.platform == "darwin":
+        base = os.path.join(os.path.expanduser("~/Library/Application Support"), nombre_app)
+    else:
+        base = os.path.join(os.path.expanduser("~"), f".{nombre_app.lower()}")
+
+    os.makedirs(base, exist_ok=True)
+    return base
+
+
+
 
 class baseDeDatos():
-	def __init__(self,db_folder:str = 'db_folder',db_name : str= 'negocio.db'):
+	def __init__(self, db_name: str = 'negocio.db'):
+		# 🔹 NUEVA ruta persistente (correctamente definida primero)
+		db_folder_nuevo = get_appdata_folder("MiNegocio")
+		db_path_nuevo = os.path.join(db_folder_nuevo, db_name)
 
-		if not os.path.exists(db_folder):
-			os.makedirs(db_folder)
+		# 🔹 RUTA VIEJA (donde estaba antes en tu proyecto)
+		db_folder_viejo = os.path.join(os.path.dirname(__file__), "db_folder")
+		db_path_viejo = os.path.join(db_folder_viejo, db_name)
+		# 🔁 MIGRACIÓN AUTOMÁTICA (solo la primera vez)
+		if os.path.exists(db_path_viejo) and not os.path.exists(db_path_nuevo):
+			print("📦 Migrando base de datos a nueva ubicación...")
+			shutil.copy2(db_path_viejo, db_path_nuevo)
 
-		db_path = os.path.join(db_folder, db_name)
-		self.connection = sqlite3.connect(db_path)
+		self.connection = sqlite3.connect(db_path_nuevo)
 		self.cursor = self.connection.cursor()
 
 	def crearTabla(self):
@@ -129,7 +156,7 @@ class baseDeDatos():
 
 	def listarPyNArticulos(self):
 		with self.connection:
-			self.cursor.execute("SELECT id, nombre, precio_venta FROM articulos WHERE estado == 'activo'")
+			self.cursor.execute("SELECT id, nombre, precio_venta, cantidad FROM articulos WHERE estado == 'activo'")
 			return self.cursor.fetchall()
 
 	def listarPyNArticulosVentas(self):

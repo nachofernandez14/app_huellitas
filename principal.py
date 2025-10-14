@@ -105,7 +105,7 @@ def ventana_principal(usuario):
 	frame_configuracion = CTkFrame(ventana_p, corner_radius=0, fg_color=gris_oscuro)
 	frame_cuentas = CTkFrame(ventana_p, fg_color=gris_claro)
 	frame_contenido_cuentas = CTkFrame(frame_cuentas, fg_color=verde_pastel)
-	frame_articulos2 = CTkFrame(frame_ventas, fg_color='white', corner_radius=10, width=800, height=490)
+	frame_articulos2 = CTkFrame(frame_ventas, fg_color='white', corner_radius=10, width=800, height=430)
 
 
 	#Creamos la base de datos
@@ -1684,6 +1684,18 @@ def ventana_principal(usuario):
 			global carrito
 			carrito ={}
 
+			def listar_articulos_ventas():
+				for item in lista_articulos_venta.get_children():
+					lista_articulos_venta.delete(item)
+				articulos = []
+				articulos = base_de_datos.listarPyNArticulos()
+				for articulo in articulos:
+					id = articulo[0]
+					nombre = articulo[1]
+					cantidad = articulo[2]
+					precio_venta = articulo[3]
+					lista_articulos_venta.insert("", "end", text=id, values=(nombre, cantidad, precio_venta))
+
 
 			limpiar_articulos()
 
@@ -1755,56 +1767,12 @@ def ventana_principal(usuario):
 				
 				limpiar_articulos()
 
-				for articulo in articulos:
-					nombre_articulo1 = articulo[1].lower()
-					if nombre_articulo1.startswith(buscador):
-						
-						tarjeta = CTkFrame(frame_articulos2, fg_color='#DFDFDF')
-						tarjeta.grid(row=fila_ac, column = column, padx=15, pady=(40,0), sticky="nsew")
-
-						informacion = articulo[1] + "\n" + "$" + str(articulo[2])
-						label_articulo1 = CTkLabel(tarjeta, text=informacion, text_color=gris_oscuro)
-						label_articulo1.pack(padx=5,pady=(10,5))
-						boton_agregar_carrito = CTkButton(tarjeta, text="Agregar al carrito", command=lambda art=articulo: agregar_al_carrito(art))
-						boton_agregar_carrito.pack(pady=(0,10),padx=10)
-						column += 1
-						if column >= 4:
-							column = 0
-							fila_ac += 1
+				
 				if(buscador== ""):
 					limpiar_articulos()
-					listar_articulos_ventas()
+					
 
-			def buscar_articulos(opcion):
-				categoria = opcion
-
-				articulos1 = []
-				articulos1 = base_de_datos.listarPyNArticulosVentasPorCat(categoria)
-				columna_actual = 0
-				fila_actual = 0
-				if (len(articulos1) > 0 ):
-					limpiar_articulos()
-					for articulo in articulos1:
-						#creamos la tarjeta del articulo
-						tarjeta = CTkFrame(frame_articulos2, fg_color='#DFDFDF')
-						tarjeta.grid(row=fila_actual, column = columna_actual, padx=15, pady=(40,0), sticky="nsew")
-
-
-
-						informacion = articulo[1] + "\n" + "$" + str(articulo[2])
-						label_articulo1 = CTkLabel(tarjeta, text=informacion, text_color=gris_oscuro)
-						label_articulo1.pack(padx=5,pady=(10,5))
-						boton_agregar_carrito = CTkButton(tarjeta, text="Agregar al carrito", command=lambda art=articulo: agregar_al_carrito(art))
-						boton_agregar_carrito.pack(pady=(0,10),padx=10)
-
-						columna_actual += 1
-						if columna_actual == 4:
-							columna_actual = 0
-							fila_actual += 1
-				elif(len(articulos1) == 0):
-					limpiar_articulos()
-					articulosNulos = CTkLabel(frame_articulos2, text="Esta categoria no contiene ningun articulo", font=fuente_default, text_color=azul_oscuro)
-					articulosNulos.place(x=255,y=250)
+			
 
 
 			def borrar_filtros():
@@ -1814,7 +1782,7 @@ def ventana_principal(usuario):
 				entry_busqueda.delete(0, END)
 					
 			
-			global label_vender,label_articulos, frame_busqueda, frame_carrito, entry_busqueda, boton_vender, label_total,label_carrito, label_total_precio, frame_carrito_articulos, frame_carrito_total,label_articulo,label_precio,label_cantidad,label_total,label_total_precio,boton_vender, label_busqueda, label_articulos_carrito, categorias_ventas, label_categoria, boton_borrar_filtros 
+			global label_vender, frame_busqueda, frame_carrito, entry_busqueda, boton_vender, label_total,label_carrito, label_total_precio, frame_carrito_articulos, frame_carrito_total,label_articulo,label_precio,label_cantidad,label_total,label_total_precio,boton_vender, label_busqueda, label_articulos_carrito, categorias_ventas, label_categoria, boton_borrar_filtros, lista_articulos_venta
 			if 'modVentas' not in globals():
 				global modVentas
 				modVentas = True
@@ -1824,7 +1792,7 @@ def ventana_principal(usuario):
 				categorias = []
 				categorias = base_de_datos.listarCategorias()
 				nombre_categoria = [categoria[1] for categoria in categorias]
-				categorias_ventas = CTkOptionMenu(frame_busqueda, values=nombre_categoria, font=fuente_default, command=buscar_articulos)
+				categorias_ventas = CTkOptionMenu(frame_busqueda, values=nombre_categoria, font=fuente_default)
 				entry_busqueda = CTkEntry(frame_busqueda, font=fuente_default)
 
 				boton_borrar_filtros = CTkButton(frame_busqueda, text="Borrar filtros", command=borrar_filtros, fg_color=azul, hover_color=azul_oscuro, font=fuente_default)
@@ -1848,8 +1816,19 @@ def ventana_principal(usuario):
 				label_total_precio = CTkLabel(frame_carrito_total, font=fuente_default, text=f"${total.get()}")
 				boton_vender = CTkButton(frame_carrito_total, text="Vender", font=fuente_default, command=vender)
 
+				lista_articulos_venta = ttk.Treeview(frame_articulos2)
+				lista_articulos_venta["columns"]= ("articulo", "cantidad", 'precio_venta')
+				lista_articulos_venta.column("#0", anchor="center", width=60)
+				lista_articulos_venta.column("articulo", anchor="center", width=250)
+				lista_articulos_venta.column("cantidad", anchor="center", width=250)
+				lista_articulos_venta.column("precio_venta", anchor="center", width=250)
+				lista_articulos_venta.heading("#0", text="ID", anchor="center")
+				lista_articulos_venta.heading("articulo", text="Articulo", anchor="center")
+				lista_articulos_venta.heading("cantidad", text="Cantidad", anchor="center")
+				lista_articulos_venta.heading("precio_venta", text="Precio venta", anchor="center")
+
 			
-			
+				
 			
 
 
@@ -1868,7 +1847,10 @@ def ventana_principal(usuario):
 			boton_borrar_filtros.pack(side=RIGHT, padx=30)
 			label_articulos_carrito.place(x=350, y=80)
 			
-			
+			lista_articulos_venta.pack(ipady=210)
+			lista_articulos_venta.unbind("<<TreeviewSelect>>")
+
+			frame_articulos2.pack_propagate()
 
 			label_carrito.place(x=990,y=80)
 			frame_carrito.pack_propagate(False)
@@ -1889,8 +1871,7 @@ def ventana_principal(usuario):
 			nombre_categoria = [categoria[1] for categoria in categorias]
 			categorias_ventas.configure(values=nombre_categoria)
 
-			articulos = []
-			articulos = base_de_datos.listarPyNArticulosVentas()
+			listar_articulos_ventas()
 
 			global columna_actual, fila_actual, columna1, fila1
 			
@@ -1898,27 +1879,7 @@ def ventana_principal(usuario):
 			fila1 = 0
 			carrito = {}
 
-			def listar_articulos_ventas():
-				columna_actual = 0
-				fila_actual = 0
-				for articulo in articulos:
-					#creamos la tarjeta del articulo
-					tarjeta = CTkFrame(frame_articulos2, fg_color='#DFDFDF')
-					tarjeta.grid(row=fila_actual, column = columna_actual, padx=15, pady=(40,0), sticky="nsew")
-
-
-
-					informacion = articulo[1] + "\n" + "$" + str(articulo[2])
-					label_articulo1 = CTkLabel(tarjeta, text=informacion, text_color=gris_oscuro)
-					label_articulo1.pack(padx=5,pady=(10,5))
-					boton_agregar_carrito = CTkButton(tarjeta, text="Agregar al carrito", command=lambda art=articulo: agregar_al_carrito(art))
-					boton_agregar_carrito.pack(pady=(0,10),padx=10)
-
-					columna_actual += 1
-					if columna_actual == 4:
-						columna_actual = 0
-						fila_actual += 1
-
+			
 			
 
 			def agregar_al_carrito(art):
@@ -2003,10 +1964,10 @@ def ventana_principal(usuario):
 			boton_limpiar_carrito = CTkButton(frame_carrito_total, text="Limpiar carrito", font=fuente_default, fg_color='red', command=limpiar_carrito)
 			boton_limpiar_carrito.grid(row=1, column=0, padx=20)
 
-			listar_articulos_ventas()
+			
 
 			frame_articulos2.grid_propagate(False)
-			frame_articulos2.pack(side=LEFT,padx=10, ipady=78)
+			frame_articulos2.pack(side=TOP,padx=10, pady=10)
 			
 
 		menu_ventas()

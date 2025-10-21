@@ -10,8 +10,6 @@ def get_appdata_folder(nombre_app="HuellitasApp"):
     """
     Retorna una carpeta persistente (por usuario) donde guardar datos.
     - En Windows: C:/Users/<usuario>/AppData/Local/HuellitasApp
-    - En Linux: /home/<usuario>/.miapp
-    - En macOS: /Users/<usuario>/Library/Application Support/MiApp
     """
     base = None
     if sys.platform.startswith("win"):

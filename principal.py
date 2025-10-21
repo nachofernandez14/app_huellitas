@@ -36,41 +36,43 @@ gris1 = '#898989'
 
 
 tema_oscuro = {
-	"fondo": "#3E3E3E",
-	"texto": "#FFFFFF",
-	"texto_boton": "#FFFFFF",
-	"placeholder": "#DEDEDE",
+    "fondo": "#3E3E3E",
+    "texto": "#FFFFFF",
+    "texto_boton": "#FFFFFF",
+    "placeholder": "#DEDEDE",
 
 }
 tema_claro = {
-	"fondo": "#DEDEDE",
-	"texto": "#FFFFFF",
-	"texto_boton": "#FFFFFF",
-	"placeholder": "#DEDEDE",
+    "fondo": "#DEDEDE",
+    "texto": "#FFFFFF",
+    "texto_boton": "#FFFFFF",
+    "placeholder": "#DEDEDE",
 
 }
 
 
 #Creamos un clase articulo y proveedor para asi simplificar el codigo
 class Articulo():
-	def __init__(self, nombre, id_categoria, id_proveedor, precio_costo, precio_venta, cantidad):
-		self.nombre = nombre
-		self.id_categoria = id_categoria
-		self.id_proveedor = id_proveedor
-		self.precio_costo = precio_costo
-		self.precio_venta = precio_venta
-		self.cantidad = cantidad
+    def __init__(self, nombre, id_categoria, id_proveedor, precio_costo, precio_venta, cantidad):
+        self.nombre = nombre
+        self.id_categoria = id_categoria
+        self.id_proveedor = id_proveedor
+        self.precio_costo = precio_costo
+        self.precio_venta = precio_venta
+        self.cantidad = cantidad
+
 class Proveedor():
-	def __init__(self, nombre, telefono):
-		self.nombre = nombre 
-		self.telefono = telefono
+    def __init__(self, nombre, telefono):
+        self.nombre = nombre 
+        self.telefono = telefono
+
 class Cuenta():
-	def __init__(self, fecha, proveedor, saldo, pagos, pedidos):
-		self.fecha = fecha
-		self.proveedor = proveedor
-		self.saldo = saldo
-		self.pagos = pagos
-		self.pedidos = pedidos
+    def __init__(self, fecha, proveedor, saldo, pagos, pedidos):
+        self.fecha = fecha
+        self.proveedor = proveedor
+        self.saldo = saldo
+        self.pagos = pagos
+        self.pedidos = pedidos
 
 
 def ventana_principal(usuario):
@@ -187,11 +189,12 @@ def ventana_principal(usuario):
 		
 		def salir():
 			if messagebox.askyesno(message="Seguro que quiere salir?", title="Sistema huellitas"):
-			 	ventana_p.destroy()
+				ventana_p.destroy()
 			else:
-			 	pass
-		
+				pass
+
 		global frame_top_configuracion, frame_labels_top, label_configuracion, boton_apariencia, boton_salir
+
 		if 'modConfiguracion' not in globals():
 			frame_top_configuracion = CTkFrame(frame_configuracion, corner_radius=0, fg_color=gris_oscuro)
 			frame_labels_top = CTkFrame(frame_configuracion, corner_radius=0, fg_color=gris_oscuro)
@@ -312,7 +315,7 @@ def ventana_principal(usuario):
 			else:
 				for articulo in articulos:
 					nombre_articulo1 = articulo[1].lower()
-					if nombre_articulo1.startswith(buscador):
+					if buscador in nombre_articulo1:
 						lista_articulos.insert("", END, text=articulo[0],values=(articulo[1],articulo[2], articulo[3], articulo[4], articulo[5], articulo[6], articulo[7]))
 				if(buscador== ""):
 					listar_articulos()
@@ -722,7 +725,7 @@ def ventana_principal(usuario):
 
 			for categoria in categorias:
 				nombre_categoria1 = categoria[1].lower()
-				if nombre_categoria1.startswith(buscador):
+				if buscador in nombre_categoria1:
 					lista_categorias.insert("", END, text=categoria[0], values=categoria[1])
 			if(buscador== ""):
 				listarCategorias()
@@ -788,56 +791,54 @@ def ventana_principal(usuario):
 			boton_volver_categorias= CTkButton(frame_contenido_categorias, text="Volver", command=lambda: [menu_categorias(), boton_manipular_categorias.configure(state='normal')])	
 
 		def seleccion_categoria(opcion):
-			ocultar_widgets_categorias()  # Asumo que tenés esta función para limpiar
+			ocultar_widgets_categorias()  
 			global label_error_categoria
 			if opcion == 'Crear categoria':
-			    label_modificar_categoria.place_forget()
-			    label_eliminar_categoria.place_forget()
-			    boton_manipular_categorias.configure(state='disabled')
-			    lista_categorias.bind("<Button-1>", block_event)
-			    if 'label_error_categoria' not in globals():
-			    	label_error_categoria = CTkLabel(frame_contenido_categorias, text="Por favor ingrese todos los datos para \n crear la categoria correctamente", text_color="red")
-			    label_error_categoria.pack_forget()
-			        
-			    def crear_categoria():
-			        categoria = entry_categoria.get()
-			        id_categoria = entry_id_categoria.get()
-			        if categoria != "":
-			        	validacion = True
-			        	categorias = base_de_datos.listarCategorias()
-			        	for categ in categorias:
-			        		if categ[1] == categoria:
-			        			messagebox.showwarning(message="Error, ya existe una categoria igual", title="Error")
-			        			validacion = False
-			        			break
-			        	if validacion:
-			        		base_de_datos.insertCategoria(id_categoria,categoria)
-			        		listarCategorias()
-			        		menu_categorias()
-			        		boton_manipular_categorias.configure(state='normal')
-			        		label_error_categoria.pack_forget()
-			        else:
-			        	label_error_categoria.pack(ipady=10)
-			        
-			    global boton_crear_categoria, label_crear_categoria
-			    if 'modCrearCategoria' not in globals():
-			        boton_crear_categoria = CTkButton(frame_contenido_categorias, text="Crear categoria", command=crear_categoria)
-			        label_crear_categoria = CTkLabel(frame_contenido_categorias, text="Ingrese el id y nombre de la categoria", font=fuente_titulos, text_color=verde_intermedio)
+				label_modificar_categoria.place_forget()
+				label_eliminar_categoria.place_forget()
+				boton_manipular_categorias.configure(state='disabled')
+				lista_categorias.bind("<Button-1>", block_event)
+				if 'label_error_categoria' not in globals():
+					label_error_categoria = CTkLabel(frame_contenido_categorias, text="Por favor ingrese todos los datos para \n crear la categoria correctamente", text_color="red")
+				label_error_categoria.pack_forget()
+				
+				def crear_categoria():
+					categoria = entry_categoria.get()
+					id_categoria = entry_id_categoria.get()
+					if categoria != "":
+						validacion = True
+						categorias = base_de_datos.listarCategorias()
+						for categ in categorias:
+							if categ[1] == categoria:
+								messagebox.showwarning(message="Error, ya existe una categoria igual", title="Error")
+								validacion = False
+								break
+						if validacion:
+							base_de_datos.insertCategoria(id_categoria,categoria)
+							listarCategorias()
+							menu_categorias()
+							boton_manipular_categorias.configure(state='normal')
+							label_error_categoria.pack_forget()
+					else:
+						label_error_categoria.pack(ipady=10)
+				
+				global boton_crear_categoria, label_crear_categoria
+				if 'modCrearCategoria' not in globals():
+					boton_crear_categoria = CTkButton(frame_contenido_categorias, text="Crear categoria", command=crear_categoria)
+					label_crear_categoria = CTkLabel(frame_contenido_categorias, text="Ingrese el id y nombre de la categoria", font=fuente_titulos, text_color=verde_intermedio)
 
-			        global modCrearCategoria
-			        modCrearCategoria = True
-			        
-			   
-			        
-			    # Mostrar el frame y widgets
-			    frame_contenido_categorias.pack(side=RIGHT, fill=Y, ipadx=20)
-			    label_crear_categoria.pack(pady=10)
-			    entry_id_categoria.pack(pady=(20,0))
-			    entry_categoria.pack(pady=(20,0))
-			    entry_categoria.delete(0, END)
-			    entry_id_categoria.delete(0, END)
-			    boton_crear_categoria.pack(pady=10)
-			    boton_volver_categorias.pack()
+					global modCrearCategoria
+					modCrearCategoria = True
+				
+				# Mostrar el frame y widgets
+				frame_contenido_categorias.pack(side=RIGHT, fill=Y, ipadx=20)
+				label_crear_categoria.pack(pady=10)
+				entry_id_categoria.pack(pady=(20,0))
+				entry_categoria.pack(pady=(20,0))
+				entry_categoria.delete(0, END)
+				entry_id_categoria.delete(0, END)
+				boton_crear_categoria.pack(pady=10)
+				boton_volver_categorias.pack()
 			        
 			    
 							
@@ -1070,7 +1071,7 @@ def ventana_principal(usuario):
 
 			for proveedor in proveedores:
 				nombre_proveedor1 = proveedor[1].lower()
-				if nombre_proveedor1.startswith(buscador):
+				if buscador in nombre_proveedor1:
 					lista_proveedores.insert("", END, text=proveedor[0], values=(proveedor[1],proveedor[2]))
 			if(buscador== ""):
 				listarProveedores()

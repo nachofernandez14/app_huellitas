@@ -3,3 +3,4 @@ instalador.iss
 VC_redist.x86.exe
 dist/
 .env/
+main.spec

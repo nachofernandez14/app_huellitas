@@ -6,6 +6,7 @@ from manejo_db import baseDeDatos
 import principal
 import tkinter 
 from tkinter import messagebox
+from utils import resource_path
 ##RUTAS
 ##CARPETA PRINCIPAL 
 carpeta_principal = os.path.dirname(__file__)
@@ -34,7 +35,7 @@ def iniciar_sesion():
 	ventana = CTk()
 	ventana.geometry("800x500")
 	ventana.title("Huellitas Sistema")
-	ventana.iconbitmap(os.path.join(carpeta_imagenes, "huellitas.ico"))
+	ventana.iconbitmap(resource_path(os.path.join(carpeta_imagenes, "huellitas.ico")))
 	##Le ponemos que la ventana se centre en la pantalla
 	ancho_pantalla = ventana.winfo_screenwidth()
 	alto_pantalla = ventana.winfo_screenheight()
@@ -51,9 +52,9 @@ def iniciar_sesion():
 	frame_contenido_login = CTkFrame(ventana, fg_color=gris_oscuro, corner_radius=0)
 	##Creacion del contenido del login
 	##ZONA IZQUIERDA
-	imagenLogo = CTkImage(dark_image=Image.open(os.path.join(carpeta_imagenes, "huellitasLogo.png")), size=(200,135))
+	imagenLogo = CTkImage(dark_image=Image.open(resource_path(os.path.join(carpeta_imagenes, "huellitasLogo.png"))), size=(200,135))
 	label_logo = CTkLabel(frame_izquierdo_login, image=imagenLogo, text="")
-	imagen_huellitas = CTkImage(dark_image=Image.open(os.path.join(carpeta_imagenes, "huellitas_titulo.png")), size=(250,100))
+	imagen_huellitas = CTkImage(dark_image=Image.open(resource_path(os.path.join(carpeta_imagenes, "huellitas_titulo.png"))), size=(250,100))
 	label_huellitas = CTkLabel(frame_izquierdo_login, image=imagen_huellitas, text = "")
 	label_marca = CTkLabel(frame_izquierdo_login, text="Desarrollado por Ignacio Fernandez", font=fuente_marca)
 
@@ -69,7 +70,7 @@ def iniciar_sesion():
 			widget.pack_forget()
 
 	##ZONA DERECHA
-	imagenLogin = CTkImage(dark_image=Image.open(os.path.join(carpeta_imagenes, "persona.png")), size=(100,100))
+	imagenLogin = CTkImage(dark_image=Image.open(resource_path(os.path.join(carpeta_imagenes, "persona.png"))), size=(100,100))
 	label_login = CTkLabel(frame_contenido_login, image=imagenLogin, text="", )
 	entry_usuario = CTkEntry(frame_contenido_login, fg_color=verde_claro, border_width=0, placeholder_text="Ingrese su usuario", font=fuente_login)
 	entry_contraseña = CTkEntry(frame_contenido_login, show="*", fg_color=verde_claro, border_width=0, placeholder_text="Ingrese su contraseña", font=fuente_login)

@@ -1,0 +1,5 @@
+Instalador_Huellitas.exe
+instalador.iss
+VC_redist.x86.exe
+dist/
+.env/

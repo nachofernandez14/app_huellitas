@@ -14,6 +14,7 @@ import time
 import subprocess
 import math
 from tkcalendar import DateEntry
+from utils import resource_path
 
 
 
@@ -78,7 +79,7 @@ def ventana_principal(usuario):
 	ventana_p = CTk()
 	ventana_p.geometry("1366x768")
 	ventana_p.title("Huellitas Sistema")
-	ventana_p.iconbitmap(os.path.join(carpeta_imagenes, "huellitas.ico"))
+	ventana_p.iconbitmap(resource_path(os.path.join(carpeta_imagenes, "huellitas.ico")))
 	
 	fuente_default = CTkFont(family="Ebrima", size=14, weight="bold")
 	fuente_titulos = CTkFont(family='Dubai', size=18, weight="bold")
@@ -142,7 +143,7 @@ def ventana_principal(usuario):
 	usuario1 = usuario
 
 	global imagen_configuracion
-	imagen_configuracion = Image.open(os.path.join(carpeta_imagenes, "configuracion.png"))
+	imagen_configuracion = Image.open(resource_path(os.path.join(carpeta_imagenes, "configuracion.png")))
 	imagen_configuracion1 = CTkImage(dark_image=imagen_configuracion, size=(30, 30))
 
 	def configuracion():
@@ -185,9 +186,9 @@ def ventana_principal(usuario):
 			boton_guardar.pack(side=LEFT, anchor=NW, padx=20, pady=20)
 		
 		def salir():
-			 if messagebox.askyesno(message="Seguro que quiere salir?", title="Sistema huellitas"):
+			if messagebox.askyesno(message="Seguro que quiere salir?", title="Sistema huellitas"):
 			 	ventana_p.destroy()
-			 else:
+			else:
 			 	pass
 		
 		global frame_top_configuracion, frame_labels_top, label_configuracion, boton_apariencia, boton_salir
@@ -245,7 +246,7 @@ def ventana_principal(usuario):
 	
 	inicio()
 	global imagen_inicio
-	imagen_inicio = Image.open(os.path.join(carpeta_imagenes, "inicio.png"))
+	imagen_inicio = Image.open(resource_path(os.path.join(carpeta_imagenes, "inicio.png")))
 	imagen_inicio1 = CTkImage(dark_image=imagen_inicio, size=(30, 30))
 
 
@@ -672,7 +673,7 @@ def ventana_principal(usuario):
 
 
 	global imagen_articulos
-	imagen_articulos = Image.open(os.path.join(carpeta_imagenes, "articulos.png"))
+	imagen_articulos = Image.open(resource_path(os.path.join(carpeta_imagenes, "articulos.png")))
 	imagen_articulos1 = CTkImage(dark_image=imagen_articulos, size=(30, 30))
 
 
@@ -1010,7 +1011,7 @@ def ventana_principal(usuario):
 		menu_categorias()
 
 	global imagen_categorias
-	imagen_categorias = Image.open(os.path.join(carpeta_imagenes, "categorias.png"))
+	imagen_categorias = Image.open(resource_path(os.path.join(carpeta_imagenes, "categorias.png")))
 	imagen_categorias1 = CTkImage(dark_image=imagen_categorias, size=(30, 30))
 
 	boton_categorias = CTkButton(frame_menu, image=imagen_categorias1, compound='left', text="Categorias", fg_color=verde_claro, text_color=gris_oscuro, font=fuente_default, command=categorias, anchor='w', width=150, height=40, corner_radius=0)
@@ -1661,7 +1662,7 @@ def ventana_principal(usuario):
 
 
 	global imagen_proveedores
-	imagen_proveedores = Image.open(os.path.join(carpeta_imagenes, "proveedores.png"))
+	imagen_proveedores = Image.open(resource_path(os.path.join(carpeta_imagenes, "proveedores.png")))
 	imagen_proveedores1 = CTkImage(dark_image=imagen_proveedores, size=(30, 30))
 
 	boton_proveedores = CTkButton(frame_menu,image=imagen_proveedores1 ,compound='left' ,text="Proveedores", fg_color=verde_claro, text_color=gris_oscuro, font=fuente_default, command=proveedores, anchor='w', width=150, height=40, corner_radius=0)
@@ -1974,7 +1975,7 @@ def ventana_principal(usuario):
 
 	
 	global imagen_ventas
-	imagen_ventas = Image.open(os.path.join(carpeta_imagenes, "carrito.png"))
+	imagen_ventas = Image.open(resource_path(os.path.join(carpeta_imagenes, "carrito.png")))
 	imagen_ventas1 = CTkImage(dark_image=imagen_ventas, size=(30, 30))	
 
 	boton_ventas = CTkButton(frame_menu, text="Ventas",image=imagen_ventas1, compound="left", fg_color=verde_claro, text_color=gris_oscuro, font=fuente_default, command=ventas, anchor='w', width=150, height=40, corner_radius=0)
